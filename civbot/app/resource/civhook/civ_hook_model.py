@@ -7,6 +7,7 @@ from jivago.lang.annotations import Serializable
 class CivHookPlayerModel(object):
     id: int
     nickName: str
+    civilization: str
     isTurnComplete: bool
     isOnline: bool
     isAlive: bool

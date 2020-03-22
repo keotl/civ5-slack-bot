@@ -6,16 +6,17 @@ from jivago.wsgi.methods import POST
 
 from civbot.app.resource.civhook.civ_hook_model import CivHookStateModel
 from civbot.app.service.events.game_update_event import GameUpdateEvent
+from civbot.app.service.game_state_notifier import GameStateNotifier
 
 
 @Resource("/civ/{game_id}")
 class CivHookResource(object):
 
     @Inject
-    def __init__(self, event_bus: AsyncEventBus):
-        self.event_bus = event_bus
+    def __init__(self, notifier: GameStateNotifier):
+        self.notifier = notifier
 
     @POST
     def state_endpoint(self, game_id: PathParam[str], body: CivHookStateModel):
-        self.event_bus.emit(GameUpdateEvent(game_id, body))
+        self.notifier.notify(str(game_id), body)
         return "OK"

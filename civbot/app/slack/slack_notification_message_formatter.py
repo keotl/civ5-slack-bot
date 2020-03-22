@@ -9,7 +9,5 @@ from civbot.app.resource.civhook.civ_hook_model import CivHookStateModel
 class SlackNotificationMessageFormatter(object):
 
     def format_message(self, state: CivHookStateModel) -> str:
-        return f"""
-        Turn: {state.gameTurn}
-        Remaining players: {','.join(Stream(state.players).map(lambda p: p.nickName))}
-        """
+        return f"""Turn: {state.gameTurn}
+Remaining players: {', '.join(Stream(state.players).filter(lambda p: not p.isTurnComplete).map(lambda p: p.nickName))}"""

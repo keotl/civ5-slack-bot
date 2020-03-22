@@ -6,9 +6,8 @@ from jivago.lang.annotations import Inject, Override
 from civbot.app.resource.civhook.civ_hook_model import CivHookStateModel
 from civbot.app.service.game_state_notifier import GameStateNotifier
 from civbot.app.slack.slack_message_repository import (SavedMessage,
-    SlackMessageRepository)
-from slack_notification_message_formatter import (
-    SlackNotificationMessageFormatter)
+                                                       SlackMessageRepository)
+from civbot.app.slack.slack_notification_message_formatter import SlackNotificationMessageFormatter
 
 
 class SlackStateNotifier(GameStateNotifier):
@@ -31,7 +30,7 @@ class SlackStateNotifier(GameStateNotifier):
         if existent_message.isPresent() and existent_message.get().turn == state.gameTurn:
             requests.post("https://slack.com/api/chat.update", data={
                 "token": self.slack_token,
-                "text": self.message_formatter.format(state),
+                "text": self.message_formatter.format_message(state),
                 "channel": self.slack_channel,
                 "ts": existent_message.get().message_ts})
 
@@ -39,7 +38,6 @@ class SlackStateNotifier(GameStateNotifier):
             response = requests.post("https://slack.com/api/chat.postMessage", data={
                 "token": self.slack_token,
                 "channel": self.slack_channel,
-                "text": self.message_formatter.format(state),
+                "text": self.message_formatter.format_message(state),
             })
             self.message_repository.persist(game_id, SavedMessage(response.json()["ts"], state.gameTurn))
-

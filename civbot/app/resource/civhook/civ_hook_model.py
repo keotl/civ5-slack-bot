@@ -17,4 +17,3 @@ class CivHookPlayerModel(object):
 class CivHookStateModel(object):
     gameTurn: int
     players: List[CivHookPlayerModel]
-

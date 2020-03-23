@@ -3,6 +3,8 @@ from typing import Dict
 from jivago.inject.annotation import Component, Singleton
 from jivago.lang.nullable import Nullable
 
+from civbot.app.resource.civhook.civ_hook_model import CivHookStateModel
+
 
 @Component
 @Singleton
@@ -21,6 +23,12 @@ class SlackMessageRepository(object):
 
 
 class SavedMessage(object):
-    def __init__(self, message_ts: str, turn: int):
+    def __init__(self, message_ts: str, turn: int, state: CivHookStateModel):
         self.message_ts = message_ts
         self.turn = turn
+        self.game_state = state
+
+    def __eq__(self, other):
+        return isinstance(other, SavedMessage) and \
+               self.message_ts == other.message_ts and \
+               self.turn == other.turn

@@ -38,8 +38,9 @@ class DiscordGameNotifier(GameStateNotifier):
             self._discord.edit_message(config.channel_id,
                                        sent.get().message_ts,
                                        self._formatter.format_message(state))
-        else:
-            message = self._discord.create_message(
-                config.channel_id, self._formatter.format_message(state))
-            self._sent_messages_repo.persist(
-                game_id, SavedMessage(message["id"], state.gameTurn))
+            return
+
+        message = self._discord.create_message(
+            config.channel_id, self._formatter.format_message(state))
+        self._sent_messages_repo.persist(
+            game_id, SavedMessage(message["id"], state.gameTurn))

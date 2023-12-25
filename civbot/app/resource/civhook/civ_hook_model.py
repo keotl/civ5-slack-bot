@@ -8,6 +8,7 @@ class CivHookPlayerModel(object):
     id: int
     nickName: str
     civilization: str
+    isHuman: bool
     isTurnComplete: bool
     isOnline: bool
     isAlive: bool

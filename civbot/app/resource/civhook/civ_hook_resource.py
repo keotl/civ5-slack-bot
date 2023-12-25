@@ -19,6 +19,6 @@ class CivHookResource(object):
 
     @POST
     def state_endpoint(self, game_id: PathParam[str], body: CivHookStateModel):
-        self._logger.warning(ObjectMapper().serialize(body))
+        self._logger.debug(ObjectMapper().serialize(body))
         self._dispatcher.update(str(game_id), body)
         return "OK"

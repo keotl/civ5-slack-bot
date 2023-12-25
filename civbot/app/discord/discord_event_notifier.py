@@ -4,7 +4,7 @@ from civbot.app.discord.discord_client import DiscordClient
 from civbot.app.domain.types import GameEvent
 from civbot.app.service.game_config_service import GameConfigService
 from civbot.app.service.game_event_notifier import GameEventNotifier
-from jivago.lang.annotations import Inject
+from jivago.lang.annotations import Inject, Override
 
 
 class DiscordEventNotifier(GameEventNotifier):
@@ -15,6 +15,7 @@ class DiscordEventNotifier(GameEventNotifier):
         self._discord = discord
         self._config_service = game_config_service
 
+    @Override
     def notify(self, game_id: str, events: List[GameEvent]):
         config = self._config_service.get_game_config(game_id)
         if config is None or config.notifier != "discord":

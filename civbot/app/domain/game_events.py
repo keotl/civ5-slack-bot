@@ -35,7 +35,7 @@ class PlayerAdvancedEraEvent(GameEvent):
     def notification_message(self) -> NotificationMessage:
         return {
             "text":
-                f"{self.player.civilization.title()} has entered the {self._era_name} era!"
+                f"{self.player.civilization.title()} has entered the {self._era_name()} era!"
         }
 
     def _era_name(self) -> str:

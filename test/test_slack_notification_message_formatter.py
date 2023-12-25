@@ -1,11 +1,10 @@
 import unittest
-
-from jivago.serialization.object_mapper import ObjectMapper
+from test.utils.dummy_entities import SOME_GAME_STATE, SOME_PLAYER
 
 from civbot.app.resource.civhook.civ_hook_model import CivHookStateModel
-from civbot.app.slack.slack_notification_message_formatter import (
-    SlackNotificationMessageFormatter)
-from test.utils.dummy_entities import SOME_GAME_STATE, SOME_PLAYER
+from civbot.app.slack.slack_notification_message_formatter import \
+    SlackNotificationMessageFormatter
+from jivago.serialization.object_mapper import ObjectMapper
 
 
 class SlackNotificationMessageFormatterTests(unittest.TestCase):
@@ -31,7 +30,8 @@ class SlackNotificationMessageFormatterTests(unittest.TestCase):
 
         self.assertTrue(str(SOME_GAME_STATE.gameTurn) in message)
 
-def clone(state: CivHookStateModel)-> CivHookStateModel:
-    object_mapper = ObjectMapper()
-    return object_mapper.deserialize(object_mapper.serialize(state), CivHookStateModel)
 
+def clone(state: CivHookStateModel) -> CivHookStateModel:
+    object_mapper = ObjectMapper()
+    return object_mapper.deserialize(object_mapper.serialize(state),
+                                     CivHookStateModel)

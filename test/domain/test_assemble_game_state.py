@@ -30,6 +30,7 @@ json_payload = {
         "currentEra": 0,
         "enemies": ["1"],
         "allies": ["doctor"],
+        "isHuman": True,
     }, {
         "id": "1",
         "nickName": "doctor",
@@ -41,6 +42,7 @@ json_payload = {
         "currentEra": 0,
         "enemies": ["0"],
         "allies": ["keotl"],
+        "isHuman": True,
     }]
 }
 

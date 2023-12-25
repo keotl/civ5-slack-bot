@@ -10,4 +10,4 @@ class SlackNotificationMessageFormatter(object):
 
     def format_message(self, state: CivHookStateModel) -> str:
         return f"""Turn: {state.gameTurn}
-Remaining players: {', '.join(Stream(state.players).filter(lambda p: p.isHuman).filter(lambda p: not p.isTurnComplete).map(lambda p: p.nickName))}"""
+Remaining players: {', '.join(Stream(state.players).filter(lambda p: p.isHuman and p.isAlive).filter(lambda p: not p.isTurnComplete).map(lambda p: p.nickName))}"""

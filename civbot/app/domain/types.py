@@ -8,6 +8,7 @@ class PlayerState(NamedTuple):
     civilization: str
     currentEra: int
     numWonders: int
+    isAlive: bool
 
 
 class GameState(NamedTuple):

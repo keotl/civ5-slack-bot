@@ -18,6 +18,7 @@ def assemble_game_state(payload: CivHookStateModel) -> GameState:
             p.civilization,
             p.currentEra,
             p.numWonders,
+            p.isAlive
         )).toList(),
         wars,
         alliances,

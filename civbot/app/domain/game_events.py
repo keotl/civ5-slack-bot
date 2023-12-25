@@ -1,5 +1,7 @@
 from typing import List
 
+from jivago.lang.annotations import Override
+
 from civbot.app.domain.types import GameEvent, NotificationMessage, PlayerState
 
 
@@ -49,3 +51,13 @@ class PlayerAdvancedEraEvent(GameEvent):
             6: "Future",
             6: "Postmodern",
         }[self.player.currentEra]
+
+class PlayerEliminatedEvent(GameEvent):
+    def __init__(self, player: PlayerState):
+        self.player = player
+
+    @Override
+    def notification_message(self) -> NotificationMessage:
+        return {
+            "text": f"{self.player.civilization} has been eliminated!"
+        }

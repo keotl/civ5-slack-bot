@@ -15,7 +15,8 @@ SOME_PLAYER: CivHookPlayerModel = ObjectMapper().deserialize("""
     "numWonders": 0,
     "currentEra": 0,
     "enemies": [],
-    "allies": []
+    "allies": [],
+    "isHuman": true
 }""", CivHookPlayerModel)
 
 SOME_GAME_STATE = CivHookStateModel()

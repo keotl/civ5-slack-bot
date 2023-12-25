@@ -49,8 +49,8 @@ class PlayerAdvancedEraEvent(GameEvent):
             4: "Industrial",
             5: "Modern",
             6: "Future",
-            6: "Postmodern",
-        }[self.player.currentEra]
+            7: "Postmodern",
+        }.get(self.player.currentEra) or "???"
 
 class PlayerEliminatedEvent(GameEvent):
     def __init__(self, player: PlayerState):

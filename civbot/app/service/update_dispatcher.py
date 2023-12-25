@@ -6,11 +6,13 @@ from civbot.app.service.game_event_notifier import GameEventNotifier
 from civbot.app.service.lock_service import LockService
 from civbot.app.service.turn_notifier import TurnNotifier
 from jivago.inject.annotation import Component
+from jivago.lang.annotations import Inject
 
 
 @Component
 class UpdateDispatcher(object):
 
+    @Inject
     def __init__(self, game_state_repository: GameStateRepository,
                  turn_notifier: TurnNotifier, lock_service: LockService,
                  game_event_notifier: GameEventNotifier):

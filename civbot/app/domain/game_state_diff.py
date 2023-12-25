@@ -1,40 +1,45 @@
 from typing import Iterable, List, Optional, Tuple
 
-from civbot.app.domain.game_events import WarEndedEvent, WarStartedEvent
+from civbot.app.domain.game_events import (PlayerAdvancedEraEvent,
+                                           WarEndedEvent, WarStartedEvent)
 from civbot.app.domain.selectors import find_player_by_id
 from civbot.app.domain.types import GameEvent, GameState
-from jivago.lang.stream import Stream
 
 
 def compute_game_state_diff(old: GameState, new: GameState) -> List[GameEvent]:
-    started_wars = _newly_started_wars(old.wars, new.wars)
-    ended_wars = _newly_ended_wars(old.wars, new.wars)
-
     return [
-        *Stream(
-            started_wars).map(lambda belligerents: _create_war_started_event(
-                new, belligerents)).filter(lambda x: x is not None),
-        *Stream(ended_wars).map(lambda belligerents: _create_war_ended_event(
-            new, belligerents)).filter(lambda x: x is not None)
+        *_newly_started_wars(old, new),
+        *_newly_ended_wars(old, new),
+        *_era_changes(old, new),
     ]
 
 
-def _newly_started_wars(
-        old_wars: List[Tuple[int, int]],
-        new_wars: List[Tuple[int, int]]) -> Iterable[Tuple[int, int]]:
-    for war in new_wars:
-        if war in old_wars:
+def _newly_started_wars(old: GameState,
+                        new: GameState) -> Iterable[WarStartedEvent]:
+    for war in new.wars:
+        if war in old.wars:
             continue
-        yield war
+        event = _create_war_started_event(new, war)
+        if event:
+            yield event
 
 
-def _newly_ended_wars(
-        old_wars: List[Tuple[int, int]],
-        new_wars: List[Tuple[int, int]]) -> Iterable[Tuple[int, int]]:
-    for war in old_wars:
-        if war in new_wars:
+def _newly_ended_wars(old: GameState,
+                      new: GameState) -> Iterable[WarEndedEvent]:
+    for war in old.wars:
+        if war in new.wars:
             continue
-        yield war
+        event = _create_war_ended_event(new, war)
+        if event:
+            yield event
+
+
+def _era_changes(old: GameState,
+                 new: GameState) -> Iterable[PlayerAdvancedEraEvent]:
+    for player in new.players:
+        old_player = find_player_by_id(old, player.id)
+        if old_player and player.currentEra > old_player.currentEra:
+            yield PlayerAdvancedEraEvent(player)
 
 
 def _create_war_started_event(

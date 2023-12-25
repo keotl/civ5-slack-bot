@@ -1,6 +1,7 @@
 import unittest
 
-from civbot.app.domain.game_events import WarEndedEvent, WarStartedEvent
+from civbot.app.domain.game_events import (PlayerAdvancedEraEvent,
+                                           WarEndedEvent, WarStartedEvent)
 from civbot.app.domain.game_state_diff import compute_game_state_diff
 from civbot.app.domain.types import GameState, PlayerState
 
@@ -23,6 +24,15 @@ class GameStateDiffTests(unittest.TestCase):
         self.assertEqual(1, len(events))
         self.assertIsInstance(events[0], WarEndedEvent)
 
+    def test_generate_era_change_event(self):
+        events = compute_game_state_diff(
+            GameState(123, [_player(0, era=0)], [], []),
+            GameState(123, [_player(0, era=1)], [], []),
+        )
 
-def _player(id: int) -> PlayerState:
-    return PlayerState(id, str(id), str(id), 0, 0)
+        self.assertEqual(1, len(events))
+        self.assertIsInstance(events[0], PlayerAdvancedEraEvent)
+
+
+def _player(id: int, *, era: int = 0) -> PlayerState:
+    return PlayerState(id, str(id), str(id), era, 0)

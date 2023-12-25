@@ -11,6 +11,10 @@ class CivHookPlayerModel(object):
     isTurnComplete: bool
     isOnline: bool
     isAlive: bool
+    numWonders: int
+    currentEra: int
+    enemies: List[str]
+    allies: List[str]
 
 
 @Serializable

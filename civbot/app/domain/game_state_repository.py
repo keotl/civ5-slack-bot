@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from civbot.app.service.game_state.types import GameState
+from civbot.app.domain.types import GameState
 
 
 class GameStateRepository(ABC):

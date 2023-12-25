@@ -1,7 +1,7 @@
 from civbot.app.discord.discord_client import DiscordClient
 from civbot.app.resource.civhook.civ_hook_model import CivHookStateModel
 from civbot.app.service.game_config_service import GameConfigService
-from civbot.app.service.game_state_notifier import GameStateNotifier
+from civbot.app.service.turn_notifier import TurnNotifier
 from civbot.app.slack.slack_message_repository import (SavedMessage,
                                                        SlackMessageRepository)
 from civbot.app.slack.slack_notification_message_formatter import \
@@ -11,7 +11,7 @@ from jivago.lang.annotations import Inject, Override
 
 
 @Component
-class DiscordGameNotifier(GameStateNotifier):
+class DiscordTurnNotifier(TurnNotifier):
 
     @Inject
     def __init__(self, discord: DiscordClient,

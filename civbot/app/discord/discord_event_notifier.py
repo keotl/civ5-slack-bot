@@ -1,0 +1,25 @@
+from typing import List
+
+from civbot.app.discord.discord_client import DiscordClient
+from civbot.app.domain.types import GameEvent
+from civbot.app.service.game_config_service import GameConfigService
+from civbot.app.service.game_event_notifier import GameEventNotifier
+from jivago.lang.annotations import Inject
+
+
+class DiscordEventNotifier(GameEventNotifier):
+
+    @Inject
+    def __init__(self, discord: DiscordClient,
+                 game_config_service: GameConfigService):
+        self._discord = discord
+        self._config_service = game_config_service
+
+    def notify(self, game_id: str, events: List[GameEvent]):
+        config = self._config_service.get_game_config(game_id)
+        if config is None or config.notifier != "discord":
+            return
+
+        for event in events:
+            self._discord.create_message(config.channel_id,
+                                         event.notification_message()["text"])

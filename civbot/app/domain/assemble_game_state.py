@@ -1,6 +1,6 @@
 from typing import List, Optional, Tuple
 
-from civbot.app.domain.types import GameState, PlayerState
+from civbot.app.domain.types import GameState, PlayerState, VictoryState
 from civbot.app.resource.civhook.civ_hook_model import (CivHookPlayerModel,
                                                         CivHookStateModel)
 from jivago.lang.stream import Stream
@@ -18,10 +18,11 @@ def assemble_game_state(payload: CivHookStateModel) -> GameState:
             p.civilization,
             p.currentEra,
             p.numWonders,
-            p.isAlive
+            p.isAlive,
         )).toList(),
         wars,
         alliances,
+        VictoryState(payload.game.winner, payload.game.victoryType),
     )
 
 

@@ -2,6 +2,7 @@ from typing import Iterable, List, Optional, Tuple
 
 from civbot.app.domain.game_events import (PlayerAdvancedEraEvent,
                                            PlayerEliminatedEvent,
+                                           PlayerVictoriousEvent,
                                            WarEndedEvent, WarStartedEvent)
 from civbot.app.domain.selectors import find_player_by_id
 from civbot.app.domain.types import GameEvent, GameState
@@ -9,8 +10,11 @@ from civbot.app.domain.types import GameEvent, GameState
 
 def compute_game_state_diff(old: GameState, new: GameState) -> List[GameEvent]:
     return [
-        *_newly_started_wars(old, new), *_newly_ended_wars(old, new),
-        *_era_changes(old, new), *_player_eliminations(old, new)
+        *_newly_started_wars(old, new),
+        *_newly_ended_wars(old, new),
+        *_era_changes(old, new),
+        *_player_eliminations(old, new),
+        *_player_victorious(old, new),
     ]
 
 
@@ -48,6 +52,14 @@ def _player_eliminations(old: GameState,
         old_player = find_player_by_id(old, player.id)
         if old_player and not player.isAlive and old_player.isAlive:
             yield PlayerEliminatedEvent(player)
+
+
+def _player_victorious(old: GameState,
+                       new: GameState) -> Iterable[PlayerVictoriousEvent]:
+    if old.victory.winner == -1 and new.victory.winner != -1:
+        winner = find_player_by_id(new, new.victory.winner)
+        if winner:
+            yield PlayerVictoriousEvent(winner, new.victory.type)
 
 
 def _create_war_started_event(

@@ -14,11 +14,12 @@ class AssembleGameStateTests(unittest.TestCase):
         self.assertEqual(123, game_state.gameTurn)
         self.assertEqual([(0, 1)], game_state.wars, "wars")
         self.assertEqual([(0, 1)], game_state.alliances, "alliances")
+        self.assertEqual(0, game_state.victory.winner)
+        self.assertEqual(4, game_state.victory.type)
 
 
 json_payload = {
-    "gameTurn":
-        123,
+    "gameTurn": 123,
     "players": [{
         "id": "0",
         "nickName": "keotl",
@@ -43,7 +44,11 @@ json_payload = {
         "enemies": ["0"],
         "allies": ["keotl"],
         "isHuman": True,
-    }]
+    }],
+    "game": {
+        "winner": 0,
+        "victoryType": 4
+    }
 }
 
 PAYLOAD = ObjectMapper().deserialize(json.dumps(json_payload),

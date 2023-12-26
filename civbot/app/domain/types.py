@@ -11,11 +11,17 @@ class PlayerState(NamedTuple):
     isAlive: bool
 
 
+class VictoryState(NamedTuple):
+    winner: int  # -1 if not ended
+    type: int
+
+
 class GameState(NamedTuple):
     gameTurn: int
     players: List[PlayerState]
     wars: List[Tuple[int, int]]
     alliances: List[Tuple[int, int]]
+    victory: VictoryState
 
 
 class NotificationMessage(TypedDict):

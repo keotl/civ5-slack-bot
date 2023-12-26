@@ -19,7 +19,13 @@ class CivHookPlayerModel(object):
 
 
 @Serializable
+class CivHookGameStateModel(object):
+    winner: int
+    victoryType: int
+
+
+@Serializable
 class CivHookStateModel(object):
     gameTurn: int
     players: List[CivHookPlayerModel]
-
+    game: CivHookGameStateModel

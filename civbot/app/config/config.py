@@ -12,6 +12,7 @@ from jivago.lang.annotations import Inject
 @Singleton
 class Config(object):
     notifier: Literal["none", "slack", "discord"]
+    discord_app_id: Optional[str]
     discord_token: Optional[str]
     default_channel: str
 
@@ -22,5 +23,7 @@ class Config(object):
             "notifier") or "none"
         self.discord_token = env.get("DISCORD_TOKEN") or application.get(
             "discord_token")
+        self.discord_app_id = env.get("DISCORD_APP_ID") or application.get(
+            "discord_app_id")
         self.default_channel = env.get("DEFAULT_CHANNEL") or application.get(
             "default_channel") or ""

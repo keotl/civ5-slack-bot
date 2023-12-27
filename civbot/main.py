@@ -13,6 +13,8 @@ from civbot.app.service.game_event_notifier import (GameEventNotifier,
 from civbot.app.service.turn_notifier import TurnNotifier
 from civbot.app.slack.slack_turn_notifier import SlackTurnNotifier
 
+import logging
+logging.getLogger().setLevel(logging.INFO)
 
 class Context(ProductionJivagoContext):
 

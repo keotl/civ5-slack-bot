@@ -26,8 +26,6 @@ class DiscordInteractionResource(object):
 
     @POST
     def post_interaction(self, req: Request, body: dict):
-        self._logger.info(f"Got interaction {req.headers.content} {body}")
-
         signature = req.headers["X-Signature-Ed25519"]
         timestamp = req.headers["X-Signature-Timestamp"]
         body_text = req.body.decode("utf-8")

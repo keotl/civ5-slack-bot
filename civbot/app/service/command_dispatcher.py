@@ -33,16 +33,18 @@ class CommandDispatcher(object):
 
             timeout = parse_duration(params.get("duration"), self._clock.now())
 
-            if params["type"] in ("all", "turn"):
+            if params.get("type", "all") in ("all", "turn"):
                 game.turn_notifications_muted_until = timeout
-            if params["type"] in ("all", "game"):
+            if params.get("type", "all") in ("all", "game"):
                 game.game_notifications_muted_until = timeout
 
             self._game_config_service.save_game_config(game_id, game)
 
-            self._logger.info(f"Muted notifications for game {game_id} until {timeout}.")
+            self._logger.info(
+                f"Muted notifications for game {game_id} until {timeout}.")
             return {"text": "Muting notifications"}
-        if command == "unmute":
+
+        elif command == "unmute":
             game_id = self._game_config_service.get_game_id_by_channel_id(
                 params.get("channel_id", "")) or ""
             game = self._game_config_service.get_game_config(game_id)
@@ -50,9 +52,9 @@ class CommandDispatcher(object):
             if not game:
                 return {"text": "Game not found for channel."}
 
-            if params["type"] in ("all", "turn"):
+            if params.get("type", "all") in ("all", "turn"):
                 game.turn_notifications_muted_until = datetime.min
-            if params["type"] in ("all", "game"):
+            if params.get("type", "all") in ("all", "game"):
                 game.game_notifications_muted_until = datetime.min
 
             self._game_config_service.save_game_config(game_id, game)

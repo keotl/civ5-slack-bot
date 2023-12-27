@@ -1,24 +1,55 @@
-from typing import Literal, NamedTuple, Optional
+from dataclasses import dataclass
+import threading
+from datetime import datetime
+from typing import Dict, Literal, NamedTuple, Optional
 
-from civbot.app.config.config import Config
+from civbot.app.config.config import Config, Singleton
 from jivago.inject.annotation import Component
 from jivago.lang.annotations import Inject
 
-
-class GameNotificationConfig(NamedTuple):
+@dataclass
+class GameNotificationConfig(object):
     notifier: Literal["none", "discord", "slack"]
     channel_id: str
+    game_notifications_muted_until: datetime
+    turn_notifications_muted_until: datetime
 
 
+@Singleton
 @Component
 class GameConfigService(object):
 
     @Inject
     def __init__(self, config: Config):
         self._config = config
+        self._lock = threading.Lock()
+        self._content: Dict[str, GameNotificationConfig] = {}
+        self._game_locks: Dict[str, threading.Lock] = {}
+        # TODO - Move to persisted implementation  - keotl 2023-12-27
 
     def get_game_config(self,
                         game_id: str) -> Optional[GameNotificationConfig]:
-        # TODO - Allow config per game instead of global  - keotl 2023-12-22
+        with self._lock:
+            if game_id not in self._game_locks:
+                self._game_locks[game_id] = threading.Lock()
+            lock = self._game_locks[game_id]
+        with lock:
+            return self._content.get(game_id) or self._default_config()
+
+    def get_game_id_by_channel_id(self, channel_id: str) -> Optional[str]:
+        for k, v in self._content.items():
+            if v.channel_id == channel_id:
+                return k
+
+    def _default_config(self):
         return GameNotificationConfig(self._config.notifier,
-                                      self._config.default_channel)
+                                      self._config.default_channel,
+                                      datetime.min, datetime.min)
+
+    def save_game_config(self, game_id: str, config: GameNotificationConfig):
+        with self._lock:
+            if game_id not in self._game_locks:
+                self._game_locks[game_id] = threading.Lock()
+            lock = self._game_locks[game_id]
+        with lock:
+            self._content[game_id] = config

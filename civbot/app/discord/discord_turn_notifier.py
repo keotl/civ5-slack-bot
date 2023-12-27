@@ -6,6 +6,7 @@ from civbot.app.slack.slack_message_repository import (SavedMessage,
                                                        SlackMessageRepository)
 from civbot.app.slack.slack_notification_message_formatter import \
     SlackNotificationMessageFormatter
+from civbot.app.util.clock import Clock
 from jivago.inject.annotation import Component
 from jivago.lang.annotations import Inject, Override
 
@@ -17,16 +18,18 @@ class DiscordTurnNotifier(TurnNotifier):
     def __init__(self, discord: DiscordClient,
                  message_formatter: SlackNotificationMessageFormatter,
                  message_repository: SlackMessageRepository,
-                 game_config_service: GameConfigService):
+                 game_config_service: GameConfigService, clock: Clock):
         self._discord = discord
         self._formatter = message_formatter
         self._sent_messages_repo = message_repository
         self._game_config_service = game_config_service
+        self._clock = clock
 
     @Override
     def notify(self, game_id: str, state: CivHookStateModel):
         config = self._game_config_service.get_game_config(game_id)
-        if config is None or config.notifier != "discord":
+        if (config is None or config.notifier != "discord"
+                or config.turn_notifications_muted_until > self._clock.now()):
             return
 
         sent = self._sent_messages_repo.find(game_id)

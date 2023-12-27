@@ -32,17 +32,21 @@ class CommandDispatcher(object):
                 return {"text": "Game not found for channel."}
 
             timeout = parse_duration(params.get("duration"), self._clock.now())
+            notification_type = params.get("type", "all")
 
-            if params.get("type", "all") in ("all", "turn"):
+            if notification_type in ("all", "turn"):
                 game.turn_notifications_muted_until = timeout
-            if params.get("type", "all") in ("all", "game"):
+            if notification_type in ("all", "game"):
                 game.game_notifications_muted_until = timeout
 
             self._game_config_service.save_game_config(game_id, game)
 
             self._logger.info(
                 f"Muted notifications for game {game_id} until {timeout}.")
-            return {"text": "Muting notifications"}
+            return {
+                "text":
+                    f"Muting {notification_type} notifications until {timeout}."
+            }
 
         elif command == "unmute":
             game_id = self._game_config_service.get_game_id_by_channel_id(
@@ -51,15 +55,15 @@ class CommandDispatcher(object):
 
             if not game:
                 return {"text": "Game not found for channel."}
-
-            if params.get("type", "all") in ("all", "turn"):
+            notification_type = params.get("type", "all")
+            if notification_type in ("all", "turn"):
                 game.turn_notifications_muted_until = datetime.min
-            if params.get("type", "all") in ("all", "game"):
+            if notification_type in ("all", "game"):
                 game.game_notifications_muted_until = datetime.min
 
             self._game_config_service.save_game_config(game_id, game)
 
             self._logger.info(f"Unmuted notifications for game {game_id}.")
-            return {"text": "Unmuting notifications"}
+            return {"text": f"Unmuting {notification_type} notifications."}
 
         return {"text": "Unknown command."}

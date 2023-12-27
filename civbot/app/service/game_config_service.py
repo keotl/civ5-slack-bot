@@ -1,11 +1,12 @@
-from dataclasses import dataclass
 import threading
+from dataclasses import dataclass
 from datetime import datetime
 from typing import Dict, Literal, NamedTuple, Optional
 
 from civbot.app.config.config import Config, Singleton
 from jivago.inject.annotation import Component
 from jivago.lang.annotations import Inject
+
 
 @dataclass
 class GameNotificationConfig(object):
@@ -37,6 +38,11 @@ class GameConfigService(object):
             return self._content.get(game_id) or self._default_config()
 
     def get_game_id_by_channel_id(self, channel_id: str) -> Optional[str]:
+
+        # TODO - Remove this hack when properly supporting connecting a new game  - keotl 2023-12-27
+        if channel_id == self._config.default_channel:
+            return "ppc"
+
         for k, v in self._content.items():
             if v.channel_id == channel_id:
                 return k

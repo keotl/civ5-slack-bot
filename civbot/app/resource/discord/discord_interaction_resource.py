@@ -49,7 +49,7 @@ class DiscordInteractionResource(object):
 
 def _parse_discord_slash_command(body: dict):
     command = body.get("data", {}).get("name") or ""
-    params = {}
+    params = {"channel_id": body.get("channel_id")}
     for option in body.get("data", {}).get("options") or []:
         params[option.get("name") or ""] = option.get("value")
     return command, params

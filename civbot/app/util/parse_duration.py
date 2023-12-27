@@ -13,8 +13,9 @@ def parse_duration(text: Optional[str], now: datetime) -> datetime:
     weeks = int(matches.group(2) or "0")
     days = int(matches.group(4) or "0")
     hours = int(matches.group(6) or "0")
+    minutes = int(matches.group(8) or "0")
 
-    return now + timedelta(days=days + 7 * weeks, hours=hours)
+    return now + timedelta(days=days + 7 * weeks, hours=hours, minutes=minutes)
 
 
-_pattern = re.compile(r"((\d+)w)?((\d+)d)?((\d+)h)?")
+_pattern = re.compile(r"((\d+)w)?((\d+)d)?((\d+)h)?((\d+)m)?")

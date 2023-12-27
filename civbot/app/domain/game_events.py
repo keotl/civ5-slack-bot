@@ -73,7 +73,7 @@ class PlayerVictoriousEvent(GameEvent):
     def notification_message(self) -> NotificationMessage:
         return {
             "text":
-                f"{self.player.civilization} has achieved a {self.victory_type} victory!"
+                f"{self.player.civilization} has achieved a {self._victory_type_name()} victory!"
         }
 
     _VICTORY_TYPES = {

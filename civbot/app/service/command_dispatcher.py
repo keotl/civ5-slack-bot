@@ -1,8 +1,11 @@
 import logging
+import uuid
 from datetime import datetime
 from typing import TypedDict
 
-from civbot.app.service.game_config_service import GameConfigService
+from civbot.app.config.config import Config
+from civbot.app.service.game_config_service import (GameConfigService,
+                                                    create_default_game_config)
 from civbot.app.util.clock import Clock
 from civbot.app.util.parse_duration import parse_duration
 from jivago.inject.annotation import Component
@@ -17,10 +20,12 @@ class CommandResponse(TypedDict):
 class CommandDispatcher(object):
 
     @Inject
-    def __init__(self, game_config_service: GameConfigService, clock: Clock):
+    def __init__(self, game_config_service: GameConfigService, clock: Clock,
+                 config: Config):
         self._game_config_service = game_config_service
         self._clock = clock
         self._logger = logging.getLogger(self.__class__.__name__)
+        self._config = config
 
     def dispatch(self, command: str, params: dict) -> CommandResponse:
         if command == "mute":
@@ -65,5 +70,15 @@ class CommandDispatcher(object):
 
             self._logger.info(f"Unmuted notifications for game {game_id}.")
             return {"text": f"Unmuting {notification_type} notifications."}
+        elif command == "connect":
+            game_id = str(uuid.uuid4())
+            game_config = create_default_game_config()
+            game_config.channel_id = params["channel_id"]
+            self._game_config_service.save_game_config(game_id, game_config)
+            self._logger.info(f"Created game {game_id}.")
+            return {
+                "text":
+                    f"A new game has successfully been created. Connect your civ webhook to {self._config.public_url}/civ/{game_id}"
+            }
 
         return {"text": "Unknown command."}

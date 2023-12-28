@@ -19,6 +19,8 @@ class Config(object):
     persistence_provider: Literal["none", "redis"]
     redis_url: Optional[str]
 
+    public_url: str
+
     @Inject
     def __init__(self, application: ApplicationProperties,
                  env: SystemEnvironmentProperties):
@@ -35,3 +37,6 @@ class Config(object):
             "PERSISTENCE_PROVIDER") or application.get(
                 "persistence_provider") or "none"
         self.redis_url = env.get("REDIS_URL") or application.get("redis_url")
+
+        self.public_url = env.get("PUBLIC_URL") or application.get(
+            "public_url") or "https://civbot.ligature.ca"

@@ -1,17 +1,24 @@
 import threading
+from abc import ABC, abstractmethod
 from typing import Dict
 
-from jivago.inject.annotation import Component, Singleton
+from jivago.lang.annotations import Override
 
 
-@Component
-@Singleton
-class LockService(object):
+class LockService(ABC):
+
+    @abstractmethod
+    def game_lock(self, game_id: str) -> threading.Lock:
+        raise NotImplementedError
+
+
+class InMemoryLockService(object):
 
     def __init__(self):
         self._lock = threading.Lock()
         self._game_locks: Dict[str, threading.Lock] = {}
 
+    @Override
     def game_lock(self, game_id: str) -> threading.Lock:
         res = None
         with self._lock:

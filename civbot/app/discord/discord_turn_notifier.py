@@ -1,11 +1,11 @@
 from civbot.app.discord.discord_client import DiscordClient
+from civbot.app.domain.turn_notification_message_formatter import \
+    TurnNotificationMessageFormatter
 from civbot.app.resource.civhook.civ_hook_model import CivHookStateModel
 from civbot.app.service.game_config_service import GameConfigService
+from civbot.app.service.turn_notification_message_repository import (
+    SavedMessage, TurnNotificationMessageRepository)
 from civbot.app.service.turn_notifier import TurnNotifier
-from civbot.app.slack.slack_message_repository import (SavedMessage,
-                                                       SlackMessageRepository)
-from civbot.app.slack.slack_notification_message_formatter import \
-    SlackNotificationMessageFormatter
 from civbot.app.util.clock import Clock
 from jivago.inject.annotation import Component
 from jivago.lang.annotations import Inject, Override
@@ -16,8 +16,8 @@ class DiscordTurnNotifier(TurnNotifier):
 
     @Inject
     def __init__(self, discord: DiscordClient,
-                 message_formatter: SlackNotificationMessageFormatter,
-                 message_repository: SlackMessageRepository,
+                 message_formatter: TurnNotificationMessageFormatter,
+                 message_repository: TurnNotificationMessageRepository,
                  game_config_service: GameConfigService, clock: Clock):
         self._discord = discord
         self._formatter = message_formatter

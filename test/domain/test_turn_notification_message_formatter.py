@@ -1,16 +1,16 @@
 import unittest
 from test.utils.dummy_entities import SOME_GAME_STATE, SOME_PLAYER
 
+from civbot.app.domain.turn_notification_message_formatter import \
+    TurnNotificationMessageFormatter
 from civbot.app.resource.civhook.civ_hook_model import CivHookStateModel
-from civbot.app.slack.slack_notification_message_formatter import \
-    SlackNotificationMessageFormatter
 from jivago.serialization.object_mapper import ObjectMapper
 
 
-class SlackNotificationMessageFormatterTests(unittest.TestCase):
+class TurnNotificationMessageFormatterTests(unittest.TestCase):
 
     def setUp(self):
-        self.formatter = SlackNotificationMessageFormatter()
+        self.formatter = TurnNotificationMessageFormatter()
 
     def test_shows_remaining_players(self):
         message = self.formatter.format_message(SOME_GAME_STATE)

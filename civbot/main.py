@@ -1,3 +1,4 @@
+import logging
 import os
 
 from jivago.config.production_jivago_context import ProductionJivagoContext
@@ -8,21 +9,26 @@ from civbot.app.discord.discord_event_notifier import DiscordEventNotifier
 from civbot.app.discord.discord_turn_notifier import DiscordTurnNotifier
 from civbot.app.domain.game_state_repository import (
     GameStateRepository, InMemoryGameStateRepository)
+from civbot.app.persistence.redis.redis_game_config_service import \
+    RedisGameConfigService
+from civbot.app.persistence.redis.redis_game_state_repository import \
+    RedisGameStateRepository
+from civbot.app.persistence.redis.redis_lock_service import RedisLockService
+from civbot.app.service.game_config_service import (GameConfigService,
+                                                    InMemoryGameConfigService)
 from civbot.app.service.game_event_notifier import (GameEventNotifier,
                                                     NoopGameEventNotifier)
+from civbot.app.service.lock_service import InMemoryLockService, LockService
 from civbot.app.service.turn_notifier import TurnNotifier
 from civbot.app.slack.slack_turn_notifier import SlackTurnNotifier
 
-import logging
 logging.getLogger().setLevel(logging.INFO)
+
 
 class Context(ProductionJivagoContext):
 
     def configure_service_locator(self):
         super().configure_service_locator()
-        self.service_locator().bind(GameStateRepository,
-                                    InMemoryGameStateRepository())
-
         if os.environ.get("NOTIFIER") in ("slack", None):
             self.service_locator().bind(TurnNotifier, SlackTurnNotifier)
             self.service_locator().bind(GameEventNotifier,
@@ -31,6 +37,20 @@ class Context(ProductionJivagoContext):
             self.service_locator().bind(TurnNotifier, DiscordTurnNotifier)
             self.service_locator().bind(GameEventNotifier,
                                         DiscordEventNotifier)
+
+        if os.environ.get("PERSISTENCE_PROVIDER") == "none":
+            self.service_locator().bind(GameStateRepository,
+                                        InMemoryGameStateRepository())
+            self.service_locator().bind(LockService, InMemoryLockService())
+            self.service_locator().bind(GameConfigService,
+                                        InMemoryGameConfigService())
+
+        elif os.environ.get("PERSISTENCE_PROVIDER") == "redis":
+            self.service_locator().bind(GameStateRepository,
+                                        RedisGameStateRepository)
+            self.service_locator().bind(LockService, RedisLockService)
+            self.service_locator().bind(GameConfigService,
+                                        RedisGameConfigService)
 
 
 application = JivagoApplication(civbot.app, context=Context)

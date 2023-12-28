@@ -15,7 +15,9 @@ class Config(object):
     discord_app_id: Optional[str]
     discord_token: Optional[str]
     discord_public_key: Optional[str]
-    default_channel: str
+
+    persistence_provider: Literal["none", "redis"]
+    redis_url: Optional[str]
 
     @Inject
     def __init__(self, application: ApplicationProperties,
@@ -28,5 +30,8 @@ class Config(object):
             "discord_app_id")
         self.discord_public_key = env.get(
             "DISCORD_PUBLIC_KEY") or application.get("discord_public_key")
-        self.default_channel = env.get("DEFAULT_CHANNEL") or application.get(
-            "default_channel") or ""
+
+        self.persistence_provider = env.get(
+            "PERSISTENCE_PROVIDER") or application.get(
+                "persistence_provider") or "none"
+        self.redis_url = env.get("REDIS_URL") or application.get("redis_url")

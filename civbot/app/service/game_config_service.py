@@ -1,11 +1,10 @@
 import threading
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Dict, Literal, NamedTuple, Optional
+from typing import Dict, Literal, Optional
 
-from civbot.app.config.config import Config, Singleton
-from jivago.inject.annotation import Component
-from jivago.lang.annotations import Inject
+from jivago.lang.annotations import Inject, Override
 
 
 @dataclass
@@ -16,18 +15,35 @@ class GameNotificationConfig(object):
     turn_notifications_muted_until: datetime
 
 
-@Singleton
-@Component
-class GameConfigService(object):
+def create_default_game_config():
+    return GameNotificationConfig("none", "", datetime.min, datetime.min)
+
+
+class GameConfigService(ABC):
+
+    @abstractmethod
+    def get_game_config(self,
+                        game_id: str) -> Optional[GameNotificationConfig]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_game_id_by_channel_id(self, channel_id: str) -> Optional[str]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def save_game_config(self, game_id: str, config: GameNotificationConfig):
+        raise NotImplementedError
+
+
+class InMemoryGameConfigService(GameConfigService):
 
     @Inject
-    def __init__(self, config: Config):
-        self._config = config
+    def __init__(self):
         self._lock = threading.Lock()
         self._content: Dict[str, GameNotificationConfig] = {}
         self._game_locks: Dict[str, threading.Lock] = {}
-        # TODO - Move to persisted implementation  - keotl 2023-12-27
 
+    @Override
     def get_game_config(self,
                         game_id: str) -> Optional[GameNotificationConfig]:
         with self._lock:
@@ -35,23 +51,15 @@ class GameConfigService(object):
                 self._game_locks[game_id] = threading.Lock()
             lock = self._game_locks[game_id]
         with lock:
-            return self._content.get(game_id) or self._default_config()
+            return self._content.get(game_id) or create_default_game_config()
 
+    @Override
     def get_game_id_by_channel_id(self, channel_id: str) -> Optional[str]:
-
-        # TODO - Remove this hack when properly supporting connecting a new game  - keotl 2023-12-27
-        if channel_id == self._config.default_channel:
-            return "ppc"
-
         for k, v in self._content.items():
             if v.channel_id == channel_id:
                 return k
 
-    def _default_config(self):
-        return GameNotificationConfig(self._config.notifier,
-                                      self._config.default_channel,
-                                      datetime.min, datetime.min)
-
+    @Override
     def save_game_config(self, game_id: str, config: GameNotificationConfig):
         with self._lock:
             if game_id not in self._game_locks:

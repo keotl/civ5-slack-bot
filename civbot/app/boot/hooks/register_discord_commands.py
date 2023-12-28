@@ -73,5 +73,7 @@ class RegisterDiscordCommands(Runnable):
                     "value": "turn"
                 }]
             }])
+        self._discord.register_global_slash_command(
+            "connect", "Connect a game to this channel.", [])
 
         self._logger.info("Registered discord global commands.")

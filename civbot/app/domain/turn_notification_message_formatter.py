@@ -1,12 +1,10 @@
-
+from civbot.app.resource.civhook.civ_hook_model import CivHookStateModel
 from jivago.inject.annotation import Component
 from jivago.lang.stream import Stream
 
-from civbot.app.resource.civhook.civ_hook_model import CivHookStateModel
-
 
 @Component
-class SlackNotificationMessageFormatter(object):
+class TurnNotificationMessageFormatter(object):
 
     def format_message(self, state: CivHookStateModel) -> str:
         return f"""Turn: {state.gameTurn}

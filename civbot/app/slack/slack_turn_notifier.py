@@ -1,10 +1,10 @@
 import requests
+from civbot.app.domain.turn_notification_message_formatter import \
+    TurnNotificationMessageFormatter
 from civbot.app.resource.civhook.civ_hook_model import CivHookStateModel
+from civbot.app.service.turn_notification_message_repository import (
+    SavedMessage, TurnNotificationMessageRepository)
 from civbot.app.service.turn_notifier import TurnNotifier
-from civbot.app.slack.slack_message_repository import (SavedMessage,
-                                                       SlackMessageRepository)
-from civbot.app.slack.slack_notification_message_formatter import \
-    SlackNotificationMessageFormatter
 from jivago.config.properties.application_properties import \
     ApplicationProperties
 from jivago.lang.annotations import Inject, Override
@@ -15,8 +15,8 @@ class SlackTurnNotifier(TurnNotifier):
     When the state is updated, the message is updated to match the game state."""
 
     @Inject
-    def __init__(self, message_repository: SlackMessageRepository,
-                 message_formatter: SlackNotificationMessageFormatter,
+    def __init__(self, message_repository: TurnNotificationMessageRepository,
+                 message_formatter: TurnNotificationMessageFormatter,
                  application_properties: ApplicationProperties):
         self.message_repository = message_repository
         self.message_formatter = message_formatter

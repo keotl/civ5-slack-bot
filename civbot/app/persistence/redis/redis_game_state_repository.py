@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 
 from civbot.app.domain.game_state_repository import GameStateRepository
@@ -15,6 +16,7 @@ class RedisGameStateRepository(GameStateRepository):
     def __init__(self, redis: RedisConnection):
         self._redis = redis
         self._object_mapper = ObjectMapper()
+        self._logger = logging.getLogger(self.__class__.__name__)
 
     @Override
     def get_last_known_game_state(self, game_id: str) -> Optional[GameState]:
@@ -22,8 +24,9 @@ class RedisGameStateRepository(GameStateRepository):
         if saved:
             try:
                 return self._object_mapper.deserialize(str(saved), GameState)
-            except:
-                pass
+            except Exception as e:
+                self._logger.warning(
+                    f"Error while deserializing game state {e}.")
         return None
 
     @Override

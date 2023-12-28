@@ -23,11 +23,11 @@ class RedisGameConfigService(GameConfigService):
         saved = self._redis.connection.get(f"gameconfig_{game_id}")
         if saved:
             try:
-                self._object_mapper.deserialize(str(saved),
-                                                GameNotificationConfig)
+                return self._object_mapper.deserialize(str(saved),
+                                                       GameNotificationConfig)
             except Exception as e:
                 self._logger.warning(
-                    f"Error while deserializing game config. Reverting to default. {e}"
+                    f"Error while deserializing game config for {game_id} {saved}. Reverting to default. {e}"
                 )
         return create_default_game_config()
 

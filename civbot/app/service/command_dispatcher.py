@@ -71,14 +71,28 @@ class CommandDispatcher(object):
             self._logger.info(f"Unmuted notifications for game {game_id}.")
             return {"text": f"Unmuting {notification_type} notifications."}
         elif command == "connect":
-            game_id = str(uuid.uuid4())
+            game_id = self._game_config_service.get_game_id_by_channel_id(
+                params["channel_id"])
+            created = False
+            if not game_id:
+                game_id = str(uuid.uuid4())
+                created = True
+
             game_config = create_default_game_config()
             game_config.channel_id = params["channel_id"]
+            game_config.notifier = params["notifier_context"]
             self._game_config_service.save_game_config(game_id, game_config)
             self._logger.info(f"Created game {game_id}.")
-            return {
-                "text":
-                    f"A new game has successfully been created. Connect your civ webhook to {self._config.public_url}/civ/{game_id}"
-            }
+
+            if created:
+                return {
+                    "text":
+                        f"A new game has successfully been created. Connect your civ webhook to '{self._config.public_url}/civ/{game_id}' and start playing!"
+                }
+            else:
+                return {
+                    "text":
+                        f"Civbot successfully reconfigured. Connect your civ webhook to '{self._config.public_url}/civ/{game_id}' and start playing!"
+                }
 
         return {"text": "Unknown command."}

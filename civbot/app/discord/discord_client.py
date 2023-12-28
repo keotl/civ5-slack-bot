@@ -48,6 +48,8 @@ class DiscordClient(object):
                 "tts": tts,
                 "embeds": []
             })
+        if not res.ok:
+            self._logger.error(f"create message: {res.status_code} - {res.text}")
         return res.json()
 
     def edit_message(self, channel: str, message_id: str,

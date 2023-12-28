@@ -12,7 +12,7 @@ import redis
 @Singleton
 class RedisConnection(object):
     connection: redis.Redis
-    
+
     @Inject
     def __init__(self, config: Config):
         self._logger = logging.getLogger(self.__class__.__name__)
@@ -20,6 +20,8 @@ class RedisConnection(object):
             self._logger.fatal(f"Missing REDIS_URL environment variable.")
             raise Exception(f"Missing REDIS_URL environment variable.")
 
-        self.connection = cast(redis.Redis, redis.from_url(config.redis_url))
+        self.connection = cast(
+            redis.Redis, redis.from_url(config.redis_url,
+                                        decode_responses=True))
         self.connection.ping()
         self._logger.info("Established Redis connection.")

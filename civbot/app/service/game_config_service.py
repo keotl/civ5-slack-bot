@@ -4,12 +4,13 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Dict, Literal, Optional
 
-from jivago.lang.annotations import Inject, Override
+from jivago.lang.annotations import Inject, Override, Serializable
 
-
+@Serializable
 @dataclass
 class GameNotificationConfig(object):
-    notifier: Literal["none", "discord", "slack"]
+    notifier: str
+    # notifier: Literal["none", "discord", "slack"]
     channel_id: str
     game_notifications_muted_until: datetime
     turn_notifications_muted_until: datetime

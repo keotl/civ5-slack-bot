@@ -1,3 +1,4 @@
+import logging
 from civbot.app.discord.discord_client import DiscordClient
 from civbot.app.domain.turn_notification_message_formatter import \
     TurnNotificationMessageFormatter
@@ -24,6 +25,7 @@ class DiscordTurnNotifier(TurnNotifier):
         self._sent_messages_repo = message_repository
         self._game_config_service = game_config_service
         self._clock = clock
+        self._logger = logging.getLogger(self.__class__.__name__)
 
     @Override
     def notify(self, game_id: str, state: CivHookStateModel):

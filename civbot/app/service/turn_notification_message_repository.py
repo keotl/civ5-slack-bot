@@ -2,10 +2,11 @@ from abc import ABC, abstractmethod
 from typing import Dict
 
 from jivago.inject.annotation import Component, Singleton
-from jivago.lang.annotations import Override
+from jivago.lang.annotations import Override, Serializable
 from jivago.lang.nullable import Nullable
 
 
+@Serializable
 class SavedMessage(object):
 
     def __init__(self, message_ts: str, turn: int):

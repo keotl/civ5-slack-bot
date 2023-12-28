@@ -14,11 +14,16 @@ from civbot.app.persistence.redis.redis_game_config_service import \
 from civbot.app.persistence.redis.redis_game_state_repository import \
     RedisGameStateRepository
 from civbot.app.persistence.redis.redis_lock_service import RedisLockService
+from civbot.app.persistence.redis.redis_turn_notification_message_repository import \
+    RedisTurnNotificationMessageRepository
 from civbot.app.service.game_config_service import (GameConfigService,
                                                     InMemoryGameConfigService)
 from civbot.app.service.game_event_notifier import (GameEventNotifier,
                                                     NoopGameEventNotifier)
 from civbot.app.service.lock_service import InMemoryLockService, LockService
+from civbot.app.service.turn_notification_message_repository import (
+    InMemoryTurnNotificationMessageRepository,
+    TurnNotificationMessageRepository)
 from civbot.app.service.turn_notifier import TurnNotifier
 from civbot.app.slack.slack_turn_notifier import SlackTurnNotifier
 
@@ -44,6 +49,9 @@ class Context(ProductionJivagoContext):
             self.service_locator().bind(LockService, InMemoryLockService())
             self.service_locator().bind(GameConfigService,
                                         InMemoryGameConfigService())
+            self.service_locator().bind(
+                TurnNotificationMessageRepository,
+                InMemoryTurnNotificationMessageRepository())
 
         elif os.environ.get("PERSISTENCE_PROVIDER") == "redis":
             self.service_locator().bind(GameStateRepository,
@@ -51,6 +59,9 @@ class Context(ProductionJivagoContext):
             self.service_locator().bind(LockService, RedisLockService)
             self.service_locator().bind(GameConfigService,
                                         RedisGameConfigService)
+            self.service_locator().bind(
+                TurnNotificationMessageRepository,
+                RedisTurnNotificationMessageRepository)
 
 
 application = JivagoApplication(civbot.app, context=Context)

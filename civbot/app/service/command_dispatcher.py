@@ -87,12 +87,12 @@ class CommandDispatcher(object):
             if created:
                 return {
                     "text":
-                        f"A new game has successfully been created. Connect your civ webhook to '{self._config.public_url}/civ/{game_id}' and start playing!"
+                        f"A new game has successfully been created. Connect your civ webhook to {self._config.public_url}/civ/{game_id} and start playing!"
                 }
             else:
                 return {
                     "text":
-                        f"Civbot successfully reconfigured. Connect your civ webhook to '{self._config.public_url}/civ/{game_id}' and start playing!"
+                        f"Civbot successfully reconfigured. Connect your civ webhook to {self._config.public_url}/civ/{game_id} and start playing!"
                 }
 
         return {"text": "Unknown command."}

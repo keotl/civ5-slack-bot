@@ -15,4 +15,9 @@ class RedisLockService(LockService):
     @Override
     def game_lock(self, game_id: str):
         return self._redis.connection.lock(f"gamelock_{game_id}",
-                                    timeout=self._default_timeout)
+                                           timeout=self._default_timeout)
+
+    @Override
+    def init_lock(self):
+        return self._redis.connection.lock(f"initlock",
+                                           timeout=self._default_timeout)

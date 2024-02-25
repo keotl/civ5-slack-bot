@@ -16,6 +16,7 @@ class TurnNotificationMessageFormatterTests(unittest.TestCase):
         message = self.formatter.format_message(SOME_GAME_STATE)
 
         self.assertTrue(f"{SOME_PLAYER.nickName}" in message)
+        self.assertFalse("Standby" in message)
 
     def test_hides_players_whose_turn_has_ended(self):
         state = clone(SOME_GAME_STATE)
@@ -29,6 +30,14 @@ class TurnNotificationMessageFormatterTests(unittest.TestCase):
         message = self.formatter.format_message(SOME_GAME_STATE)
 
         self.assertTrue(str(SOME_GAME_STATE.gameTurn) in message)
+
+    def test_shows_separate_standby_players_when_any(self):
+        state = clone(SOME_GAME_STATE)
+        state.players[0].isTurnActive = False
+
+        message = self.formatter.format_message(state)
+
+        self.assertTrue(f"Standby: {SOME_PLAYER.nickName}" in message)
 
 
 def clone(state: CivHookStateModel) -> CivHookStateModel:

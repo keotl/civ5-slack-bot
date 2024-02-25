@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from jivago.lang.annotations import Serializable
 
@@ -10,6 +10,7 @@ class CivHookPlayerModel(object):
     civilization: str
     isHuman: bool
     isTurnComplete: bool
+    isTurnActive: bool
     isOnline: bool
     isAlive: bool
     numWonders: int

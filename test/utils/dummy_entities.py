@@ -12,6 +12,7 @@ SOME_PLAYER: CivHookPlayerModel = ObjectMapper().deserialize("""
     "isTurnComplete": false,
     "isOnline": true,
     "isAlive": true,
+    "isTurnActive": true,
     "numWonders": 0,
     "currentEra": 0,
     "enemies": [],

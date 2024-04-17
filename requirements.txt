@@ -1,5 +1,5 @@
 croniter==2.0.1
-gunicorn==21.2.0
+gunicorn==22.0.0
 Jinja2==3.1.2
 #jivago==0.6.5
 git+https://github.com/keotl/jivago@develop
